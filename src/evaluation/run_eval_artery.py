@@ -47,10 +47,15 @@ def run_eval(
     times = tracks_recieved.query(f"(time>={start_time})&(time<{end_time})")["time"].unique()
 
     for time in times:
-        track_group = tracks_recieved.query(f"(time<={time})&(time>{time - save_tracks_time})")
-        # Filter out double tracks from same sensor
-        idx = track_group.groupby(["src_station", "track_id"])["lastMeasurement"].idxmax()
-        track_group = track_group.loc[idx]
+
+        if rules == 'etsi':
+            track_group = tracks_recieved.query(f"(time<={time})&(time>{time - save_tracks_time})")
+            # Filter out double tracks from same sensor
+            idx = track_group.groupby(["src_station", "track_id"])["lastMeasurement"].idxmax()
+            track_group = track_group.loc[idx]
+
+        else:
+            track_group = tracks_recieved.query(f"time=={time}")
 
         # filter tracks whose update has been too long ago
         track_group = track_group.query(f"{time} - lastMeasurement < {invalidate_time}").copy()
@@ -124,13 +129,13 @@ def run_eval(
         )
 
         best_asso = gt_association(track_group)
-        greedy_asso_gl = greedy_multidim(tracks, merge=False, likelihood="gl", tracks_df=track_group)
-        greedy_asso_ml = greedy_multidim(tracks, merge=False, likelihood="ml", tracks_df=track_group)
-        greedy_asso_euclid = greedy_multidim(tracks, merge=False, likelihood="euclid", tracks_df=track_group)
+        greedy_asso_gl = greedy_multidim(tracks, merge=True, likelihood="gl", tracks_df=track_group)
+        greedy_asso_ml = greedy_multidim(tracks, merge=True, likelihood="ml", tracks_df=track_group)
+        greedy_asso_euclid = greedy_multidim(tracks, merge=True, likelihood="euclid", tracks_df=track_group)
 
-        greedy_old_asso_gl = greedy_multidim(tracks, merge=True, likelihood="gl", tracks_df=track_group)
-        greedy_old_asso_ml = greedy_multidim(tracks, merge=True, likelihood="ml", tracks_df=track_group)
-        greedy_old_asso_euclid = greedy_multidim(tracks, merge=True, likelihood="euclid", tracks_df=track_group)
+        greedy_old_asso_gl = greedy_multidim(tracks, merge=False, likelihood="gl", tracks_df=track_group)
+        greedy_old_asso_ml = greedy_multidim(tracks, merge=False, likelihood="ml", tracks_df=track_group)
+        greedy_old_asso_euclid = greedy_multidim(tracks, merge=False, likelihood="euclid", tracks_df=track_group)
 
         greedy_2D_asso_gl = greedy_sensorwise(tracks, likelihood="gl", tracks_df=track_group)
         greedy_2D_asso_ml = greedy_sensorwise(tracks, likelihood="ml", tracks_df=track_group)
