@@ -3,6 +3,12 @@
 This is the code repository to the publication:
 Wolf, Laura M., et al. "Track-to-Track Association for Collective Perception based on Stochastic Optimization." arXiv preprint [arXiv:2510.21278](https://arxiv.org/abs/2510.21278) (2025). 
 
+
+
+[![Visualization of Track-to-track association on Youtube](https://img.youtube.com/vi/LZFgRNuHfDk/0.jpg)](https://www.youtube.com/watch?v=LZFgRNuHfDk)
+
+
+
 The corresponding data set is available at https://doi.org/10.25625/8FQZZF.
 
 ## Notes:
